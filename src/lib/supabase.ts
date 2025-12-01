@@ -1,30 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Fallback values for when ENV variables aren't loaded (deployment issue)
+const FALLBACK_SUPABASE_URL = 'https://rixmudvtbfkjpwjoefon.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpeG11ZHZ0YmZranB3am9lZm9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1ODk4NzIsImV4cCI6MjA2NjE2NTg3Mn0.PQss75_gbLaiJDFxKvCuHNirUVkKUGrINYGO1oewQGA';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || FALLBACK_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_SUPABASE_ANON_KEY;
+
 console.log("SUPABASE ENV:", {
-  url: supabaseUrl,
-  key: supabaseAnonKey?.slice(0, 10) + "..."
+  url: import.meta.env.VITE_SUPABASE_URL ? 'FROM ENV' : 'USING FALLBACK',
+  key: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'FROM ENV' : 'USING FALLBACK'
 });
-
-// More detailed error handling for missing environment variables
-if (!supabaseUrl) {
-  console.error('Missing VITE_SUPABASE_URL environment variable');
-  throw new Error('Supabase URL is required. Please set VITE_SUPABASE_URL in your environment variables.');
-}
-
-if (!supabaseAnonKey) {
-  console.error('Missing VITE_SUPABASE_ANON_KEY environment variable');
-  throw new Error('Supabase Anon Key is required. Please set VITE_SUPABASE_ANON_KEY in your environment variables.');
-}
-
-// Validate URL format
-try {
-  new URL(supabaseUrl);
-} catch (error) {
-  console.error('Invalid VITE_SUPABASE_URL format:', supabaseUrl);
-  throw new Error('Invalid Supabase URL format. Please check your VITE_SUPABASE_URL environment variable.');
-}
 
 // Custom storage adapter to handle iframe/sandboxed environments where localStorage is blocked
 const createSafeStorage = () => {
