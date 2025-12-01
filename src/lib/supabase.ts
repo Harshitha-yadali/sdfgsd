@@ -7,10 +7,18 @@ const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3M
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || FALLBACK_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_SUPABASE_ANON_KEY;
 
-console.log("SUPABASE ENV:", {
-  url: import.meta.env.VITE_SUPABASE_URL ? 'FROM ENV' : 'USING FALLBACK',
-  key: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'FROM ENV' : 'USING FALLBACK'
+console.log("SUPABASE CONFIGURATION:", {
+  url: supabaseUrl,
+  hasEnvUrl: !!import.meta.env.VITE_SUPABASE_URL,
+  hasEnvKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  source: import.meta.env.VITE_SUPABASE_URL ? 'Environment Variables' : 'Fallback Values',
+  mode: import.meta.env.MODE
 });
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('CRITICAL: Supabase configuration is missing!');
+  throw new Error('Supabase configuration is incomplete. Please check your environment variables.');
+}
 
 // Custom storage adapter to handle iframe/sandboxed environments where localStorage is blocked
 const createSafeStorage = () => {
